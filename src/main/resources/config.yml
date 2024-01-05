@@ -1,0 +1,21 @@
+max-thirstValue: 20
+
+aridity:
+  max-value: 4
+  per-thirst: 1
+  actions:
+    swimming: 0.01
+    break-block: 0.005
+    sprinting: 0.1
+    jumping: 0.05
+    jumping-when-sprinting: 0.2
+    attack-entity: 0.1
+
+mmoitems-stats:
+  water-purity:
+    name: "水质纯净度"
+    material: WATER_BUCKET
+    lore:
+      - "消耗品中水质的纯净度"
+
+version: 1

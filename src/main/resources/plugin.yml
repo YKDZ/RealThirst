@@ -1,0 +1,9 @@
+name: RealThirst
+version: '${version}'
+main: cn.encmys.ykdz.forest.realthirst.RealThirst
+api-version: '1.16'
+author: YK_DZ
+softdepend:
+  - RealisticSeasons
+  - PlaceholderAPI
+  - MMOItems
