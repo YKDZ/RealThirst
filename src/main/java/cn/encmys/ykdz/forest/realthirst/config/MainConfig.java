@@ -13,6 +13,8 @@ import java.io.IOException;
 public class MainConfig {
     private static Plugin plugin = RealThirst.getPlugin();
     private static YamlConfiguration config;
+    // debug
+    public static boolean debug;
     // bStats
     public static boolean bStats;
     public static float max_thirstValue;
@@ -60,22 +62,24 @@ public class MainConfig {
 
     private static void loadSettings() {
         ConfigurationSection section = null;
+        // debug
+        debug = config.getBoolean("debug", false);
         // bStats
         bStats = config.getBoolean("bStats", true);
         // max-thirstValue
-        max_thirstValue = (float) config.getDouble("max-thirstValue");
+        max_thirstValue = (float) config.getDouble("max-thirstValue", 20);
         // aridity
         section = config.getConfigurationSection("aridity");
-        aridity_maxValue = (float) section.getDouble("max-value");
-        aridity_perThirst = (float) section.getDouble("per-thirst");
+        aridity_maxValue = (float) section.getDouble("max-value", 4);
+        aridity_perThirst = (float) section.getDouble("per-thirst", 1);
         // aridity.actions
         section = config.getConfigurationSection("aridity.actions");
-        aridity_actions_swimming = (float) section.getDouble("swimming");
-        aridity_actions_breakBlock = (float) section.getDouble("break-block");
-        aridity_actions_sprinting = (float) section.getDouble("sprinting");
-        aridity_actions_jumping = (float) section.getDouble("jumping");
-        aridity_actions_jumpingWhenSprinting = (float) section.getDouble("jumping-when-sprinting");
-        aridity_actions_attackEntity = (float) section.getDouble("attack-entity");
+        aridity_actions_swimming = (float) section.getDouble("swimming", 0.01);
+        aridity_actions_breakBlock = (float) section.getDouble("break-block", 0.005);
+        aridity_actions_sprinting = (float) section.getDouble("sprinting", 0.1);
+        aridity_actions_jumping = (float) section.getDouble("jumping", 0.05);
+        aridity_actions_jumpingWhenSprinting = (float) section.getDouble("jumping-when-sprinting", 0.2);
+        aridity_actions_attackEntity = (float) section.getDouble("attack-entity", 0.1);
         // environment
         section = config.getConfigurationSection("environment");
         environment_formula = section.getString("formula", "0.5 + (%airTemp% + 50) / 100 * (3 - 0.5) * (1 - %humidity%)");

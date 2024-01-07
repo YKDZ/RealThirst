@@ -3,13 +3,20 @@ package cn.encmys.ykdz.forest.realthirst.player;
 import cn.encmys.ykdz.forest.realthirst.RealThirst;
 import cn.encmys.ykdz.forest.realthirst.config.MainConfig;
 import cn.encmys.ykdz.forest.realthirst.environment.ThirstEnvironment;
+import cn.encmys.ykdz.forest.realthirst.event.AridityChangeEvent;
+import cn.encmys.ykdz.forest.realthirst.event.ThirstValueChangeEvent;
+import cn.encmys.ykdz.forest.realthirst.event.ThirstinessChangeEvent;
 import cn.encmys.ykdz.forest.realthirst.hook.MMOItemsHook;
+import cn.encmys.ykdz.forest.realthirst.utils.DebugUtils;
 import cn.encmys.ykdz.forest.realthirst.utils.MMOItemsUtils;
 import cn.encmys.ykdz.forest.realthirst.utils.MathUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.Nullable;
 
 public class ThirstPlayer {
 
@@ -38,37 +45,74 @@ public class ThirstPlayer {
         }
     }
 
-    public void changeThirst(float value) {
-        float remain;
-        if(value > 0) {
-            remain = value + getThirstValue() - MainConfig.max_thirstValue;
-            modifyThirstValue(value);
-            if(remain > 0) {
-                modifyThirstiness(remain);
+    public void changeThirst(@Nullable ItemStack item, float value) {
+        float thirstValue = getThirstValue();
+        float thirstiness = getThirstiness();
+
+        if (value > 0) {
+            thirstValue += value;
+            if (thirstValue > MainConfig.max_thirstValue) {
+                thirstiness += thirstValue - MainConfig.max_thirstValue;
+                thirstValue = MainConfig.max_thirstValue;
             }
         } else {
-            remain = getThirstiness() + value;
-            modifyThirstiness(value);
-            if(remain < 0) {
-                modifyThirstValue(remain);
+            thirstiness += value;
+            if (thirstiness < 0) {
+                thirstValue += thirstiness;
+                thirstiness = 0;
             }
+        }
+
+        // call event
+        ThirstValueChangeEvent thirstValueChangeEvent = new ThirstValueChangeEvent(
+                player,
+                item,
+                thirstValue
+        );
+        Bukkit.getPluginManager().callEvent(thirstValueChangeEvent);
+        if (!thirstValueChangeEvent.isCancelled()) {
+            modifyThirstValue(thirstValueChangeEvent.getNow() - getThirstValue());
+        }
+
+        // call event
+        ThirstinessChangeEvent thirstinessChangeEvent = new ThirstinessChangeEvent(
+                player,
+                item,
+                thirstiness
+        );
+        Bukkit.getPluginManager().callEvent(thirstinessChangeEvent);
+        if (!thirstinessChangeEvent.isCancelled()) {
+            modifyThirstiness(thirstinessChangeEvent.getNow() - getThirstiness());
         }
     }
 
     public void changeAridity(float value) {
-        if(modifyAridity(value) == MainConfig.aridity_maxValue) {
+
+        // call event
+        AridityChangeEvent aridityChangeEvent = new AridityChangeEvent(
+                player,
+                MathUtils.minMax(0f, getAridity() + value, MainConfig.aridity_maxValue)
+        );
+        Bukkit.getPluginManager().callEvent(aridityChangeEvent);
+        if (aridityChangeEvent.isCancelled()) {
+            return;
+        }
+
+        if(modifyAridity(aridityChangeEvent.getNow() - getAridity()) == MainConfig.aridity_maxValue) {
             modifyAridity(-MainConfig.aridity_maxValue);
-            changeThirst(-MainConfig.aridity_perThirst * thirstEnvironment.getAridityModifier() * (1 - getWaterKeep()));
+            changeThirst(null, -MainConfig.aridity_perThirst * thirstEnvironment.getAridityModifier() * (1 - getWaterKeep()));
         }
     }
 
     public float modifyThirstValue(float value) {
+        DebugUtils.sendPlayerMessage(player, "口渴值" + value);
         float result = MathUtils.minMax(0f, value + getThirstValue(), MainConfig.max_thirstValue);
         container.set(thirstValueKey, PersistentDataType.FLOAT, result);
         return result;
     }
 
     public float modifyThirstiness(float value) {
+        DebugUtils.sendPlayerMessage(player, "干度值" + value);
         float result = MathUtils.minMax(0f, value + getThirstiness(), getThirstValue());
         container.set(thirstinessKey, PersistentDataType.FLOAT, result);
         return result;
@@ -96,7 +140,6 @@ public class ThirstPlayer {
         if(!MMOItemsHook.isRegistered()) {
             return 0;
         }
-        player.sendMessage(String.valueOf(MMOItemsUtils.getPlayerStatValue(player, MMOItemsHook.waterKeepId)));
         return (float) MMOItemsUtils.getPlayerStatValue(player, MMOItemsHook.waterKeepId);
     }
 

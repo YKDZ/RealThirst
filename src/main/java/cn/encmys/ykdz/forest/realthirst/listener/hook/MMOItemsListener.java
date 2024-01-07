@@ -17,9 +17,9 @@ public class MMOItemsListener implements Listener {
         String purity = MMOItemsUtils.getStringStatValue(e.getMMOItem(), MMOItemsHook.waterPurityId);
         if(purity == null) { return; }
         try {
-            thirstPlayer.changeThirst(Float.parseFloat(purity));
+            thirstPlayer.changeThirst(e.getMMOItem().getNBT().toItem(), Float.parseFloat(purity));
         } catch (NumberFormatException ignored) {
-            thirstPlayer.changeThirst(MainConfig.getPurityValue(purity));
+            thirstPlayer.changeThirst(e.getMMOItem().getNBT().toItem(), MainConfig.getPurityValue(purity));
         }
     }
 }

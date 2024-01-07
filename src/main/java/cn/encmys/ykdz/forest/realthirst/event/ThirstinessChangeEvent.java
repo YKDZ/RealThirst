@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ThirstValueChangeEvent extends Event implements Cancellable {
+public class ThirstinessChangeEvent extends Event implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
     private final Player player;
@@ -16,7 +16,7 @@ public class ThirstValueChangeEvent extends Event implements Cancellable {
     private float now;
     private boolean isCancelled;
 
-    public ThirstValueChangeEvent(@NotNull Player player, @Nullable ItemStack item, float now) {
+    public ThirstinessChangeEvent(@NotNull Player player, @Nullable ItemStack item, float now) {
         this.player = player;
         this.item = item;
         this.now = now;

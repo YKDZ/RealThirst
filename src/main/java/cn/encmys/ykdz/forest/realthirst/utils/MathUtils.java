@@ -20,7 +20,7 @@ public class MathUtils {
         ScriptEngine engine = manager.getEngineByName("JavaScript");
         try {
             Object result = engine.eval(formula);
-            return (float) result;
+            return Float.parseFloat(String.valueOf(result));
         } catch (ScriptException e) {
             e.printStackTrace();
         }
