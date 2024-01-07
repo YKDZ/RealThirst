@@ -2,6 +2,9 @@ package cn.encmys.ykdz.forest.realthirst.player;
 
 import cn.encmys.ykdz.forest.realthirst.RealThirst;
 import cn.encmys.ykdz.forest.realthirst.config.MainConfig;
+import cn.encmys.ykdz.forest.realthirst.environment.ThirstEnvironment;
+import cn.encmys.ykdz.forest.realthirst.hook.MMOItemsHook;
+import cn.encmys.ykdz.forest.realthirst.utils.MMOItemsUtils;
 import cn.encmys.ykdz.forest.realthirst.utils.MathUtils;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -11,6 +14,7 @@ import org.bukkit.persistence.PersistentDataType;
 public class ThirstPlayer {
 
     private final Player player;
+    private final ThirstEnvironment thirstEnvironment;
     private final PersistentDataContainer container;
     private final NamespacedKey thirstValueKey = new NamespacedKey(RealThirst.getPlugin(), "thirst_value");
     private final NamespacedKey thirstinessKey = new NamespacedKey(RealThirst.getPlugin(), "thirstiness");
@@ -19,6 +23,7 @@ public class ThirstPlayer {
     public ThirstPlayer(Player player) {
         this.player = player;
         this.container = player.getPersistentDataContainer();
+        this.thirstEnvironment = new ThirstEnvironment(player.getLocation());
     }
 
     public void initThirst() {
@@ -26,7 +31,7 @@ public class ThirstPlayer {
             container.set(thirstinessKey, PersistentDataType.FLOAT, MainConfig.max_thirstValue);
         }
         if(container.get(thirstinessKey, PersistentDataType.FLOAT) == null) {
-            container.set(thirstinessKey, PersistentDataType.FLOAT, MainConfig.max_thirstValue);
+            container.set(thirstinessKey, PersistentDataType.FLOAT, MainConfig.max_thirstValue / 2f);
         }
         if(container.get(aridityKey, PersistentDataType.FLOAT) == null) {
             container.set(aridityKey, PersistentDataType.FLOAT, 0f);
@@ -53,7 +58,7 @@ public class ThirstPlayer {
     public void changeAridity(float value) {
         if(modifyAridity(value) == MainConfig.aridity_maxValue) {
             modifyAridity(-MainConfig.aridity_maxValue);
-            changeThirst(MainConfig.aridity_perThirst);
+            changeThirst(-MainConfig.aridity_perThirst * thirstEnvironment.getAridityModifier() * (1 - getWaterKeep()));
         }
     }
 
@@ -87,7 +92,19 @@ public class ThirstPlayer {
         return container.getOrDefault(aridityKey, PersistentDataType.FLOAT, 0f);
     }
 
+    public float getWaterKeep() {
+        if(!MMOItemsHook.isRegistered()) {
+            return 0;
+        }
+        player.sendMessage(String.valueOf(MMOItemsUtils.getPlayerStatValue(player, MMOItemsHook.waterKeepId)));
+        return (float) MMOItemsUtils.getPlayerStatValue(player, MMOItemsHook.waterKeepId);
+    }
+
     public Player getPlayer() {
         return player;
+    }
+
+    public ThirstEnvironment getThirstEnvironment() {
+        return thirstEnvironment;
     }
 }

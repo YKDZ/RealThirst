@@ -1,6 +1,7 @@
 package cn.encmys.ykdz.forest.realthirst.config;
 
 import cn.encmys.ykdz.forest.realthirst.RealThirst;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -8,21 +9,34 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 public class MainConfig {
     private static Plugin plugin = RealThirst.getPlugin();
     private static YamlConfiguration config;
+    // bStats
+    public static boolean bStats;
     public static float max_thirstValue;
     // aridity
     public static float aridity_maxValue;
     public static float aridity_perThirst;
+    // aridity.actions
     public static float aridity_actions_swimming;
     public static float aridity_actions_breakBlock;
     public static float aridity_actions_sprinting;
     public static float aridity_actions_jumping;
     public static float aridity_actions_jumpingWhenSprinting;
     public static float aridity_actions_attackEntity;
+    // environment
+    public static String environment_formula;
+    // mmoitems.stats
+    public static String mmoitems_stats_waterPurity_name;
+    public static Material mmoitems_stats_waterPurity_material;
+    public static String[] mmoitems_stats_waterPurity_lore;
+    public static String[] mmoitems_stats_waterPurity_types;
+    public static String mmoitems_stats_waterKeep_name;
+    public static Material mmoitems_stats_waterKeep_material;
+    public static String[] mmoitems_stats_waterKeep_lore;
+    public static String[] mmoitems_stats_waterKeep_types;
     // version
     public static int version;
 
@@ -46,6 +60,8 @@ public class MainConfig {
 
     private static void loadSettings() {
         ConfigurationSection section = null;
+        // bStats
+        bStats = config.getBoolean("bStats", true);
         // max-thirstValue
         max_thirstValue = (float) config.getDouble("max-thirstValue");
         // aridity
@@ -60,7 +76,25 @@ public class MainConfig {
         aridity_actions_jumping = (float) section.getDouble("jumping");
         aridity_actions_jumpingWhenSprinting = (float) section.getDouble("jumping-when-sprinting");
         aridity_actions_attackEntity = (float) section.getDouble("attack-entity");
+        // environment
+        section = config.getConfigurationSection("environment");
+        environment_formula = section.getString("formula", "0.5 + (%airTemp% + 50) / 100 * (3 - 0.5) * (1 - %humidity%)");
+        // mmoitems.stats
+        section = config.getConfigurationSection("mmoitems.stats");
+        mmoitems_stats_waterPurity_material = Material.valueOf(section.getString("water-purity.material", "WATER_BUCKET"));
+        mmoitems_stats_waterPurity_name = section.getString("water-purity.name", "水质纯净度");
+        mmoitems_stats_waterPurity_lore = section.getStringList("water-purity.lore").toArray(new String[0]);
+        mmoitems_stats_waterPurity_types = section.getStringList("water-purity.types").toArray(new String[0]);
+
+        mmoitems_stats_waterKeep_material = Material.valueOf(section.getString("water-keep.material", "LEATHER_CHESTPLATE"));
+        mmoitems_stats_waterKeep_name = section.getString("water-keep.name", "保水性");
+        mmoitems_stats_waterKeep_lore = section.getStringList("water-keep.lore").toArray(new String[0]);
+        mmoitems_stats_waterKeep_types = section.getStringList("water-keep.types").toArray(new String[0]);
         // version
         version = config.getInt("version");
+    }
+
+    public static float getPurityValue(String purity) {
+        return (float) config.getDouble("mmoitems.purity." + purity.toLowerCase(), 0);
     }
 }

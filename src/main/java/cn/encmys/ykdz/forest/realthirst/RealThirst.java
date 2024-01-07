@@ -12,20 +12,32 @@ public final class RealThirst extends JavaPlugin {
     private static RealThirst plugin;
 
     @Override
-    public void onEnable() {
+    public void onLoad() {
         plugin = this;
 
         MainConfig.load();
 
+        if(Bukkit.getPluginManager().getPlugin("MMOItems") != null) {
+            MMOItemsHook.register();
+            plugin.getLogger().info("Hooked onto MMOItems");
+        }
+    }
+
+    @Override
+    public void onEnable() {
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), plugin);
+
+        if(Bukkit.getPluginManager().getPlugin("MMOItems") != null) {
+            Bukkit.getPluginManager().registerEvents(new MMOItemsListener(), plugin);
+        }
+
+        if(Bukkit.getPluginManager().getPlugin("RealisticSeasons") != null) {
+            plugin.getLogger().info("Hooked onto RealisticSeasons");
+        }
 
         if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new PlaceholderAPIHook(plugin).register();
-        }
-
-        if(Bukkit.getPluginManager().getPlugin("MMOItems") != null) {
-            MMOItemsHook.register();
-            Bukkit.getPluginManager().registerEvents(new MMOItemsListener(), plugin);
+            plugin.getLogger().info("Hooked onto PlaceholderAPI");
         }
     }
 
@@ -36,5 +48,9 @@ public final class RealThirst extends JavaPlugin {
 
     public static RealThirst getPlugin() {
         return plugin;
+    }
+
+    public static boolean isHookedPluginEnabled(String plugin) {
+        return Bukkit.getPluginManager().isPluginEnabled(plugin);
     }
 }

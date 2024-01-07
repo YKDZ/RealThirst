@@ -1,3 +1,5 @@
+bStats: true
+
 max-thirstValue: 20
 
 aridity:
@@ -11,11 +13,28 @@ aridity:
     jumping-when-sprinting: 0.2
     attack-entity: 0.1
 
-mmoitems-stats:
-  water-purity:
-    name: "水质纯净度"
-    material: WATER_BUCKET
-    lore:
-      - "消耗品中水质的纯净度"
+environment:
+  formula: "0.5 + (%airTemp% + 50) / 100 * (3 - 0.5) * (1 - %humidity%)"
+
+mmoitems:
+  stats:
+    water-purity:
+      name: "水质纯净度"
+      material: WATER_BUCKET
+      lore:
+        - "消耗品中水质的纯净度"
+      types:
+        - "all"
+    water-keep:
+      name: "保水性"
+      material: LEATHER_CHESTPLATE
+      lore:
+        - "一件护甲可以减缓水分失去速度的能力"
+      types:
+        - "all"
+  purity:
+    dirty: 5
+    raw: 7
+    pure: 10
 
 version: 1

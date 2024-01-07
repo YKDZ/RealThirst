@@ -1,6 +1,7 @@
 package cn.encmys.ykdz.forest.realthirst.hook;
 
 import cn.encmys.ykdz.forest.realthirst.RealThirst;
+import cn.encmys.ykdz.forest.realthirst.config.MainConfig;
 import cn.encmys.ykdz.forest.realthirst.player.ThirstPlayer;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
@@ -48,6 +49,10 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
                 return String.valueOf(thirstPlayer.getThirstiness());
             case "aridity":
                 return String.valueOf(thirstPlayer.getAridity());
+            case "max_aridity":
+                return String.valueOf(MainConfig.aridity_maxValue);
+            case "max_thirstValue":
+                return String.valueOf(MainConfig.max_thirstValue);
             default:
                 return null;
         }

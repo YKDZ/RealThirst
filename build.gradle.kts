@@ -56,8 +56,8 @@ allprojects {
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
 
-    implementation("net.Indyuce:MythicLib-dist:1.6.2-SNAPSHOT")
-    implementation("net.Indyuce:MMOItems-API:6.9.5-SNAPSHOT")
+    compileOnly("net.Indyuce:MMOItems-API:6.9.5-SNAPSHOT")
+    compileOnly("io.lumine:MythicLib-dist:1.6.2-SNAPSHOT")
 
     implementation("dev.jorel:commandapi-annotations:9.3.0")
     implementation("dev.jorel:commandapi-bukkit-shade:9.3.0")
@@ -69,6 +69,8 @@ dependencies {
     implementation("net.kyori:adventure-api:4.14.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.1")
     implementation("net.kyori:adventure-text-minimessage:4.14.0")
+
+    compileOnly(files("libs/RealisticSeasons-10.7.4.jar"))
 
     implementation("org.bstats:bstats-bukkit:3.0.2")
 
