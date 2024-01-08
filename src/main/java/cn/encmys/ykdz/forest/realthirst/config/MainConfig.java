@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class MainConfig {
+
     private static Plugin plugin = RealThirst.getPlugin();
     private static YamlConfiguration config;
     // debug
@@ -30,6 +31,9 @@ public class MainConfig {
     public static float aridity_actions_attackEntity;
     // environment
     public static String environment_formula;
+    // effect
+    public static float effect_disableSatiated;
+    public static float effect_disableJumping;
     // mmoitems.stats
     public static String mmoitems_stats_waterPurity_name;
     public static Material mmoitems_stats_waterPurity_material;
@@ -43,7 +47,6 @@ public class MainConfig {
     public static int version;
 
     public static void load() {
-
         File file = new File(plugin.getDataFolder(), "config.yml");
         config = new YamlConfiguration();
 
@@ -83,6 +86,10 @@ public class MainConfig {
         // environment
         section = config.getConfigurationSection("environment");
         environment_formula = section.getString("formula", "0.5 + (%airTemp% + 50) / 100 * (3 - 0.5) * (1 - %humidity%)");
+        // effect
+        section = config.getConfigurationSection("effect");
+        effect_disableSatiated = (float) section.getDouble("disable-satiated",  6);
+        effect_disableJumping = (float) section.getDouble("disable-jumping", 2.0);
         // mmoitems.stats
         section = config.getConfigurationSection("mmoitems.stats");
         mmoitems_stats_waterPurity_material = Material.valueOf(section.getString("water-purity.material", "WATER_BUCKET"));

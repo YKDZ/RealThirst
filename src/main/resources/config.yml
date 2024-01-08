@@ -18,6 +18,10 @@ aridity:
 environment:
   formula: "0.5 + (%airTemp% + 50) / 100 * (3 - 0.5) * (1 - %humidity%)"
 
+effect:
+  disable-satiated: 6.0
+  disable-jumping: 2.0
+
 mmoitems:
   stats:
     water-purity:

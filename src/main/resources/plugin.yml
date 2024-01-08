@@ -4,6 +4,8 @@ main: cn.encmys.ykdz.forest.realthirst.RealThirst
 api-version: '1.16'
 author: YK_DZ
 folia-supported: false
+depend:
+  - ProtocolLib
 softdepend:
   - RealisticSeasons
   - PlaceholderAPI

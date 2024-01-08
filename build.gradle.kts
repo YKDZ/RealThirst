@@ -35,6 +35,7 @@ allprojects {
         maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
         maven("https://repo.xenondevs.xyz/releases/")
         maven("https://nexus.phoenixdevt.fr/repository/maven-public/")
+        maven("https://repo.dmulloy2.net/repository/public/")
     }
 
     tasks.processResources {
@@ -58,6 +59,8 @@ dependencies {
 
     compileOnly("net.Indyuce:MMOItems-API:6.9.5-SNAPSHOT")
     compileOnly("io.lumine:MythicLib-dist:1.6.2-SNAPSHOT")
+
+    compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
 
     implementation("dev.jorel:commandapi-annotations:9.3.0")
     implementation("dev.jorel:commandapi-bukkit-shade:9.3.0")

@@ -10,6 +10,8 @@ import cn.encmys.ykdz.forest.realthirst.hook.MMOItemsHook;
 import cn.encmys.ykdz.forest.realthirst.utils.DebugUtils;
 import cn.encmys.ykdz.forest.realthirst.utils.MMOItemsUtils;
 import cn.encmys.ykdz.forest.realthirst.utils.MathUtils;
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.events.PacketContainer;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -17,6 +19,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.InvocationTargetException;
 
 public class ThirstPlayer {
 
@@ -141,6 +145,14 @@ public class ThirstPlayer {
             return 0;
         }
         return (float) MMOItemsUtils.getPlayerStatValue(player, MMOItemsHook.waterKeepId);
+    }
+
+    public void blockSprinting() {
+        PacketContainer packet = RealThirst.getProtocolManager().createPacket(PacketType.Play.Server.UPDATE_HEALTH);
+        packet.getFloat().write(0, (float) player.getHealth());
+        packet.getIntegers().write(0, 0);
+        packet.getFloat().write(1, player.getSaturation());
+        RealThirst.getProtocolManager().sendServerPacket(player, packet);
     }
 
     public Player getPlayer() {

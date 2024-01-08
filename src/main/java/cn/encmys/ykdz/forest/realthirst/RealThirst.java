@@ -5,11 +5,20 @@ import cn.encmys.ykdz.forest.realthirst.hook.MMOItemsHook;
 import cn.encmys.ykdz.forest.realthirst.hook.PlaceholderAPIHook;
 import cn.encmys.ykdz.forest.realthirst.listener.PlayerListener;
 import cn.encmys.ykdz.forest.realthirst.listener.hook.MMOItemsListener;
+import cn.encmys.ykdz.forest.realthirst.schedule.ThirstSchedule;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class RealThirst extends JavaPlugin {
     private static RealThirst plugin;
+    private static ProtocolManager protocolManager;
+    private static ThirstSchedule thirstSchedule;
+
+    public static ThirstSchedule getThirstSchedule() {
+        return thirstSchedule;
+    }
 
     @Override
     public void onLoad() {
@@ -26,6 +35,10 @@ public final class RealThirst extends JavaPlugin {
     @Override
     public void onEnable() {
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), plugin);
+
+        protocolManager = ProtocolLibrary.getProtocolManager();
+
+        thirstSchedule = new ThirstSchedule(plugin);
 
         if(Bukkit.getPluginManager().getPlugin("MMOItems") != null) {
             Bukkit.getPluginManager().registerEvents(new MMOItemsListener(), plugin);
@@ -52,5 +65,9 @@ public final class RealThirst extends JavaPlugin {
 
     public static boolean isHookedPluginEnabled(String plugin) {
         return Bukkit.getPluginManager().isPluginEnabled(plugin);
+    }
+
+    public static ProtocolManager getProtocolManager() {
+        return protocolManager;
     }
 }

@@ -1,5 +1,6 @@
 package cn.encmys.ykdz.forest.realthirst.listener;
 
+import cn.encmys.ykdz.forest.realthirst.RealThirst;
 import cn.encmys.ykdz.forest.realthirst.config.MainConfig;
 import cn.encmys.ykdz.forest.realthirst.player.ThirstPlayer;
 import org.bukkit.Statistic;
@@ -10,9 +11,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
+import org.bukkit.event.player.PlayerToggleSprintEvent;
+import org.bukkit.util.Vector;
 
 import java.util.HashMap;
 
@@ -34,6 +38,9 @@ public class PlayerListener implements Listener {
         } else {
             thirstPlayer.changeAridity(MainConfig.aridity_actions_jumping);
         }
+        if(thirstPlayer.getThirstValue() <= MainConfig.effect_disableJumping) {
+            player.setVelocity(player.getVelocity().setY(0));
+        }
     }
 
     @EventHandler
@@ -52,7 +59,8 @@ public class PlayerListener implements Listener {
     }
 
     private static HashMap<Player, Double> playerSwimDistance = new HashMap<>();
-    @EventHandler void onPlayerSwim(PlayerMoveEvent e) {
+    @EventHandler
+    public void onPlayerSwim(PlayerMoveEvent e) {
         Player player = e.getPlayer();
         if (player.isSwimming()) {
             double distance = e.getFrom().distance(e.getTo());
@@ -70,7 +78,8 @@ public class PlayerListener implements Listener {
     }
 
     private static HashMap<Player, Double> playerSprintingDistance = new HashMap<>();
-    @EventHandler void onPlayerSprinting(PlayerMoveEvent e) {
+    @EventHandler
+    public void onPlayerSprinting(PlayerMoveEvent e) {
         Player player = e.getPlayer();
         if (player.isSprinting()) {
             double distance = e.getFrom().distance(e.getTo());
@@ -84,6 +93,17 @@ public class PlayerListener implements Listener {
             playerSprintingDistance.put(player, sprintingDistance);
         } else {
             playerSprintingDistance.remove(player);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerRegainHealth(EntityRegainHealthEvent e) {
+        if(MainConfig.effect_disableSatiated == -1) { return; }
+        Entity entity = e.getEntity();
+        if(!(entity instanceof Player)) { return; }
+        ThirstPlayer thirstPlayer = new ThirstPlayer((Player) e.getEntity());
+        if(thirstPlayer.getThirstValue() <= MainConfig.effect_disableSatiated || e.getRegainReason() == EntityRegainHealthEvent.RegainReason.SATIATED) {
+            e.setCancelled(true);
         }
     }
 }
